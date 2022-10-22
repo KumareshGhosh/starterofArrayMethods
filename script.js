@@ -751,98 +751,68 @@ console.log(convertTitle('another sublime FOR the EXAMPLE'));
  */
 
 //Final Coding challenge:
-//Solution 1:
+
 const dogs = [
   { weight: 22, curFood: 250, owners: ['Alice', 'Bob'] },
   { weight: 8, curFood: 200, owners: ['Matilda'] },
   { weight: 13, curFood: 275, owners: ['Sarah', 'John'] },
   { weight: 32, curFood: 340, owners: ['Michael'] },
 ];
-const recFood = function (arr) {
-  const r = arr.map(
-    (mov, i) =>
-      (arr[i].recommendedFood = Math.round(arr[i].weight ** 0.75 * 28))
-  );
-  return r;
-};
-console.log(recFood(dogs));
+//Solution 1:(Used forEach method)
+dogs.forEach(
+  dog => (dog.recommendedFood = Math.trunc(dog.weight ** 0.75 * 28))
+);
 console.log(dogs);
 
-//Solution 2:
+//Solution 2:(Used Find method)
 const checkSarah = function (arr) {
-  const find = arr.findIndex((mov, i) => arr[i].owners.includes('Sarah'));
-  console.log(find);
-  const x = arr[find].recommendedFood * 1.1;
-  const y = arr[find].recommendedFood * 0.9;
-  if (arr[find].curFood < x && arr[find].curFood > y)
-    console.log('Dog is healthy');
-  else if (arr[find].curFood > x) console.log('Dog eating too much');
-  else if (arr[find].curFood < y) console.log('Dog eating too less');
+  const findSarah = arr.find(mov => mov.owners.includes('Sarah'));
+  console.log(findSarah);
+  console.log(
+    `Sarah's dog eating too ${
+      findSarah.curFood > findSarah.recommendedFood ? 'much' : 'less'
+    }`
+  );
 };
 checkSarah(dogs);
 
 //solution 3:
-const findMax = arr => arr.map((el, i) => (arr[i].recommendedFood * 110) / 100);
-const max = findMax(dogs);
-console.log(max);
-const findMin = arr => arr.map((el, i) => (arr[i].recommendedFood * 90) / 100);
-const min = findMin(dogs);
-console.log(min);
-const onlyCurfood = arr => arr.map((mov, i) => arr[i].curFood);
-const cFood = onlyCurfood(dogs);
-console.log(cFood);
-const ownersEatTooMuch1 = [];
-const ownersEatTooLittle1 = [];
-const checkHealth = function (arr) {
-  arr.map(function (mov, i) {
-    if (cFood[i] > max[i]) ownersEatTooMuch1.push(arr[i].owners);
-    else if (cFood[i] < min[i]) ownersEatTooLittle1.push(arr[i].owners);
-  });
-};
-checkHealth(dogs);
-console.log(ownersEatTooLittle1.flat(), ownersEatTooMuch1.flat());
+const ownersEatTooMuch = dogs
+  .filter(dog => dog.curFood > dog.recommendedFood)
+  .flatMap(dog => dog.owners);
+console.log(ownersEatTooMuch);
+
+const ownersEatTooLittle = dogs
+  .filter(dog => dog.curFood < dog.recommendedFood)
+  .flatMap(dog => dog.owners);
+console.log(ownersEatTooLittle);
 
 //Solution 4:
-const ownersEatTooLittle = ownersEatTooLittle1.flat();
-const ownersEatTooMuch = ownersEatTooMuch1.flat();
+
 //"Matildaand Alice and Bob's dogs eat too much!" and "Sarah and
 //John and Michael's dogs eat too little!"
-const str1 = (ownersEatTooLittle + '').replaceAll(',', ' and ');
-const str2 = (ownersEatTooMuch + '').replaceAll(',', ' and ');
-console.log(`${str1}'s dogs eat too little`);
-console.log(`${str2}'s dogs eat too much`);
 
-//Solution 5:
+console.log(`${ownersEatTooMuch.join(' and ')}'s dog eats too much`);
+console.log(`${ownersEatTooLittle.join(' and ')}'s dog eats too little`);
+
+//Solution 5://no dog eating exact recommended amount
 const checkRecomenndedFood = function (arr) {
-  const check = arr.every((_, i) => arr[i].recommendedFood === arr[i].curFood);
+  const check = arr.some(arr => arr.recommendedFood === arr.curFood);
   console.log(check);
 };
 checkRecomenndedFood(dogs);
 
-//Solution 6:
-const checkokFood = function (arr) {
-  arr.some(function (_, i) {
-    const x = arr[i].recommendedFood * 1.1;
-    const y = arr[i].recommendedFood * 0.9;
-    console.log(x > arr[i].curFood && y < arr[i].curFood);
-  });
-};
-checkokFood(dogs);
+//Solution 6://atleast 1 dog eating ok amount
+const checkEatingok = dog =>
+  dog.curFood > dog.recommendedFood * 0.9 &&
+  dog.curFood < dog.recommendedFood * 1.1;
+console.log(dogs.some(checkEatingok));
 
 //Solution 7:
-const createArrayofFood = function (arr) {
-  const okFood = [];
-  arr.some(function (mov, i) {
-    const x = arr[i].recommendedFood * 1.1;
-    const y = arr[i].recommendedFood * 0.9;
-    if (x > arr[i].curFood && y < arr[i].curFood) okFood.push(arr[i]);
-  });
-  console.log(okFood);
-};
-createArrayofFood(dogs);
+console.log(dogs.filter(checkEatingok));
 
-//Solution 8:
-const ex = Array.from(dogs, (mov, i) => dogs[i]).sort(
+//Solution 8://ascending order of rec. food
+const ex = Array.from(dogs, dog => dog).sort(
   (a, b) => a.recommendedFood - b.recommendedFood
 );
 console.log(ex);
